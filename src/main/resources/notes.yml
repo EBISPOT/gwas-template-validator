@@ -1,0 +1,26 @@
+triggerRow: Add your data below this line
+studyTagColumnName: studyTag
+columns:
+  - columnName: studyTag
+    baseType: String
+    required: true
+  - columnName: note
+    baseType: String
+    required: true
+  - columnName: noteSubject
+    baseType: String
+    required: true
+    acceptedValues:
+      - Preliminary review
+      - Review/secondary extraction
+      - Post-publishing review
+      - Trait
+      - Initial extraction
+      - Other
+      - Duplication TAG
+  - columnName: status
+    baseType: String
+    required: true
+    acceptedValues:
+      - private
+      - public

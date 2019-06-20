@@ -10,4 +10,5 @@ public class ValidatorConstants {
 
     public static final String SAMPLE = "SAMPLE";
 
+    public static final String FORMAT_YAML = "YAML";
 }

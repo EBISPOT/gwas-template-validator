@@ -1,0 +1,50 @@
+triggerRow: Add your data below this line
+studyTagColumnName: studyTag
+columns:
+  - columnName: studyTag
+    baseType: String
+    required: true
+  - columnName: genotypingTechnology
+    baseType: String
+    required: true
+    acceptedValues:
+      - Genome-wide genotyping array
+      - Targeted genotyping array
+      - Exome genotyping array
+      - Whole genome sequencing
+  - columnName: arrayManufacturer
+    baseType: String
+    required: false
+  - columnName: arrayInformation
+    baseType: String
+    required: false
+  - columnName: imputation
+    baseType: Boolean
+    required: true
+  - columnName: variantCount
+    baseType: Integer
+    required: true
+  - columnName: statisticalModel
+    baseType: String
+    required: false
+  - columnName: studyDescription
+    baseType: String
+    required: false
+  - columnName: trait
+    baseType: String
+    required: true
+  - columnName: efoTrait
+    baseType: String
+    required: false
+  - columnName: backgroundTrait
+    baseType: String
+    required: false
+  - columnName: backgroundEfoTrait
+    baseType: String
+    required: false
+  - columnName: summaryStatisticsFile
+    baseType: String
+    required: false
+  - columnName: summaryStatisticsAssembly
+    baseType: String
+    required: false

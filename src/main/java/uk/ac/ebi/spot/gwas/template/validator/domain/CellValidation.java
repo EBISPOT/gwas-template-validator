@@ -1,8 +1,14 @@
 package uk.ac.ebi.spot.gwas.template.validator.domain;
 
+import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 import java.util.List;
 
-public class CellValidation {
+@EqualsAndHashCode
+public class CellValidation implements Serializable {
+
+    private static final long serialVersionUID = -3440290320750216439L;
 
     private String columnName;
 
@@ -104,5 +110,10 @@ public class CellValidation {
 
     public void setAcceptedValues(List<String> acceptedValues) {
         this.acceptedValues = acceptedValues;
+    }
+
+    @Override
+    public String toString() {
+        return columnName + " [" + baseType + " | " + required + "]";
     }
 }

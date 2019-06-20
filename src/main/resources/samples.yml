@@ -1,0 +1,36 @@
+triggerRow: Add your data below this line
+studyTagColumnName: studyTag
+columns:
+  - columnName: studyTag
+    baseType: String
+    required: true
+  - columnName: stage
+    baseType: String
+    required: true
+    acceptedValues:
+      - discovery
+      - replication
+  - columnName: size
+    baseType: Integer
+    required: true
+  - columnName: cases
+    baseType: Integer
+    required: false
+  - columnName: controls
+    baseType: Integer
+    required: false
+  - columnName: sampleDescription
+    baseType: Integer
+    required: false
+  - columnName: ancestryCategory
+    baseType: String
+    required: true
+  - columnName: ancestry
+    baseType: String
+    required: false
+  - columnName: ancestryDescription
+    baseType: String
+    required: false
+  - columnName: countryRecruitement
+    baseType: String
+    required: true

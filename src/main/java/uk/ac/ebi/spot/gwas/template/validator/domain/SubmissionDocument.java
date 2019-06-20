@@ -7,11 +7,11 @@ public class SubmissionDocument {
 
     private List<Study> studyEntries;
 
-    private List<Study> associationEntries;
+    private List<Association> associationEntries;
 
-    private List<Study> sampleEntries;
+    private List<Sample> sampleEntries;
 
-    private List<Study> noteEntries;
+    private List<Note> noteEntries;
 
     public SubmissionDocument() {
         studyEntries = new ArrayList<>();
@@ -20,35 +20,35 @@ public class SubmissionDocument {
         noteEntries = new ArrayList<>();
     }
 
+    public void addStudyEntry(Study study) {
+        studyEntries.add(study);
+    }
+
+    public void addAssociation(Association association) {
+        associationEntries.add(association);
+    }
+
+    public void addSample(Sample sample) {
+        sampleEntries.add(sample);
+    }
+
+    public void addNote(Note note) {
+        noteEntries.add(note);
+    }
+
     public List<Study> getStudyEntries() {
         return studyEntries;
     }
 
-    public void setStudyEntries(List<Study> studyEntries) {
-        this.studyEntries = studyEntries;
-    }
-
-    public List<Study> getAssociationEntries() {
+    public List<Association> getAssociationEntries() {
         return associationEntries;
     }
 
-    public void setAssociationEntries(List<Study> associationEntries) {
-        this.associationEntries = associationEntries;
-    }
-
-    public List<Study> getSampleEntries() {
+    public List<Sample> getSampleEntries() {
         return sampleEntries;
     }
 
-    public void setSampleEntries(List<Study> sampleEntries) {
-        this.sampleEntries = sampleEntries;
-    }
-
-    public List<Study> getNoteEntries() {
+    public List<Note> getNoteEntries() {
         return noteEntries;
-    }
-
-    public void setNoteEntries(List<Study> noteEntries) {
-        this.noteEntries = noteEntries;
     }
 }

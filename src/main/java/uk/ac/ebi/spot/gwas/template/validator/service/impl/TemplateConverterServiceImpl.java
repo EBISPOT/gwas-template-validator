@@ -9,16 +9,15 @@ import uk.ac.ebi.spot.gwas.template.validator.component.validator.TemplateValida
 import uk.ac.ebi.spot.gwas.template.validator.component.validator.TemplateValidatorAdapterFactory;
 import uk.ac.ebi.spot.gwas.template.validator.config.SystemConfigProperties;
 import uk.ac.ebi.spot.gwas.template.validator.config.ValidationConfig;
+import uk.ac.ebi.spot.gwas.template.validator.domain.SubmissionDocument;
 import uk.ac.ebi.spot.gwas.template.validator.domain.ValidationConfiguration;
-import uk.ac.ebi.spot.gwas.template.validator.service.TemplateValidatorService;
+import uk.ac.ebi.spot.gwas.template.validator.service.TemplateConverterService;
 import uk.ac.ebi.spot.gwas.template.validator.util.SubmissionTemplateReader;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 @Service
-public class TemplateValidatorServiceImpl implements TemplateValidatorService {
+public class TemplateConverterServiceImpl implements TemplateConverterService {
 
     @Autowired
     private TemplateValidatorAdapterFactory templateValidatorAdapterFactory;
@@ -30,52 +29,27 @@ public class TemplateValidatorServiceImpl implements TemplateValidatorService {
     private SystemConfigProperties systemConfigProperties;
 
     @Override
-    public void validate(SubmissionTemplateReader submissionTemplateReader) {
+    public SubmissionDocument convert(SubmissionTemplateReader submissionTemplateReader) {
+        SubmissionDocument submissionDocument = new SubmissionDocument();
         if (submissionTemplateReader.isValid()) {
-            Map<String, String> studyTagMap = readStudiesSheet(submissionTemplateReader);
             Iterator<Sheet> sheets = submissionTemplateReader.sheets();
             while (sheets.hasNext()) {
                 Sheet sheet = sheets.next();
                 for (ValidationConfig validationConfig : systemConfigProperties.getValidationConfigList()) {
-                    if (!validationConfig.isStudies() && sheet.getSheetName().equalsIgnoreCase(validationConfig.getSheetName())) {
-                        processSheet(sheet, validationConfig, studyTagMap);
-                        continue;
+                    if (sheet.getSheetName().equalsIgnoreCase(validationConfig.getSheetName())) {
+                        convertSheet(sheet, validationConfig, submissionDocument);
                     }
                 }
             }
         }
+
+        return submissionDocument;
     }
 
-    private Map<String, String> readStudiesSheet(SubmissionTemplateReader submissionTemplateReader) {
-        Iterator<Sheet> sheets = submissionTemplateReader.sheets();
-
-        Map<String, String> studyTagMap = new HashMap<>();
-        ValidationConfig studiesConfig = null;
-        for (ValidationConfig validationConfig : systemConfigProperties.getValidationConfigList()) {
-            if (validationConfig.isStudies()) {
-                studiesConfig = validationConfig;
-                break;
-            }
-        }
-        if (studiesConfig == null) {
-            System.err.println("Unable to find studies validation configuration. Aborting process.");
-            return null;
-        }
-
-        while (sheets.hasNext()) {
-            Sheet sheet = sheets.next();
-            if (sheet.getSheetName().equalsIgnoreCase(studiesConfig.getSheetName())) {
-                processSheet(sheet, studiesConfig, studyTagMap);
-                break;
-            }
-        }
-        return studyTagMap;
-    }
-
-    private void processSheet(Sheet sheet, ValidationConfig validationConfig, Map<String, String> studyTagMap) {
+    private void convertSheet(Sheet sheet, ValidationConfig validationConfig, SubmissionDocument submissionDocument) {
         TemplateValidator templateValidator = templateValidatorAdapterFactory.getAdapter(validationConfig.getSheetValidationComponent());
         CellValidationParser cellValidationParser = cellValidationParserAdapterFactory.getAdapter(validationConfig.getValidationConfigFormat());
         ValidationConfiguration validationConfiguration = cellValidationParser.parseCellValidations(validationConfig.getValidationConfigLocation());
-        templateValidator.validateSheet(sheet, validationConfiguration, studyTagMap);
+        templateValidator.convertSheet(sheet, validationConfiguration, submissionDocument);
     }
 }

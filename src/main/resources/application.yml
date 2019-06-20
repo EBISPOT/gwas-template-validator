@@ -1,0 +1,25 @@
+validation:
+  studies:
+    sheet: studies
+    component: STUDY
+    configuration:
+      format: YAML
+      location: studies.yml
+  associations:
+    sheet: associations
+    component: ASSOCIATION
+    configuration:
+      format: YAML
+      location: associations.yml
+  samples:
+    sheet: samples
+    component: SAMPLE
+    configuration:
+      format: YAML
+      location: samples.yml
+  notes:
+    sheet: notes
+    component: NOTE
+    configuration:
+      format: YAML
+      location: notes.yml

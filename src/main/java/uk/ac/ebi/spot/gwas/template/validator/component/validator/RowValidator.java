@@ -1,35 +1,33 @@
-package uk.ac.ebi.spot.gwas.template.validator.component;
+package uk.ac.ebi.spot.gwas.template.validator.component.validator;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import uk.ac.ebi.spot.gwas.template.validator.domain.CellValidation;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 public class RowValidator {
 
-    private Map<Integer, CellValidation> columns;
+    public final static String BOOL_VALUE_YES = "yes";
+
+    public final static String BOOL_VALUE_NO = "no";
+
+    private List<CellValidation> columns;
 
     private String studyTag;
 
     private boolean valid;
 
-    public RowValidator(Row row, Map<Integer, CellValidation> columns) {
+    public RowValidator(Row row, List<CellValidation> columns, String studyTagColumnName) {
         this.columns = columns;
         this.valid = true;
-        this.processRow(row);
+        this.processRow(row, studyTagColumnName);
     }
 
-    private void processRow(Row currentRow) {
-        Iterator<Cell> cellIterator = currentRow.cellIterator();
-        int cellPosition = 0;
-        while (cellIterator.hasNext()) {
-            Cell cell = cellIterator.next();
-            CellValidation cellValidation = columns.get(cellPosition);
-            if (cellPosition > columns.size() - 1) {
-                break;
-            }
+    private void processRow(Row currentRow, String studyTagColumnName) {
+        for (int i = 0; i < columns.size(); i++) {
+            Cell cell = currentRow.getCell(i);
+            CellValidation cellValidation = columns.get(i);
 
             if (cellValidation.getBaseType().equalsIgnoreCase(String.class.getSimpleName())) {
                 String value = null;
@@ -50,7 +48,14 @@ public class RowValidator {
                         }
                     }
                 }
-                if (cellValidation.getColumnName().equalsIgnoreCase("studyTag")) {
+                if (cellValidation.getPattern() != null) {
+                    if (value != null) {
+                        if (!value.matches(cellValidation.getPattern())) {
+                            valid = false;
+                        }
+                    }
+                }
+                if (cellValidation.getColumnName().equalsIgnoreCase(studyTagColumnName)) {
                     if (value != null) {
                         studyTag = value;
                     }
@@ -92,15 +97,13 @@ public class RowValidator {
                             }
                         }
                         if (value != null) {
-                            if (!value.equalsIgnoreCase("yes") && !value.equalsIgnoreCase("no")) {
+                            if (!value.equalsIgnoreCase(BOOL_VALUE_YES) && !value.equalsIgnoreCase(BOOL_VALUE_NO)) {
                                 valid = false;
                             }
                         }
                     }
                 }
             }
-
-            cellPosition++;
         }
     }
 
