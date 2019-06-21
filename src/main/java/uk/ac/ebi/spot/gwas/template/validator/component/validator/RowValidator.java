@@ -1,10 +1,16 @@
 package uk.ac.ebi.spot.gwas.template.validator.component.validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import uk.ac.ebi.spot.gwas.template.validator.config.ErrorType;
 import uk.ac.ebi.spot.gwas.template.validator.domain.CellValidation;
+import uk.ac.ebi.spot.gwas.template.validator.domain.ErrorMessage;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RowValidator {
 
@@ -18,9 +24,12 @@ public class RowValidator {
 
     private boolean valid;
 
+    private Map<Integer, ErrorMessage> errorMessageMap;
+
     public RowValidator(Row row, List<CellValidation> columns, String studyTagColumnName) {
         this.columns = columns;
         this.valid = true;
+        this.errorMessageMap = new LinkedHashMap<>();
         this.processRow(row, studyTagColumnName);
     }
 
@@ -36,15 +45,19 @@ public class RowValidator {
                         value = cell.getStringCellValue();
                     } catch (Exception e) {
                         valid = false;
+                        errorMessageMap.put(i, new ErrorMessage(ErrorType.MISSING_VALUE, null, null));
                     }
                     if ("".equals(value)) {
                         valid = false;
+                        errorMessageMap.put(i, new ErrorMessage(ErrorType.MISSING_VALUE, null, null));
                     }
                 }
                 if (cellValidation.getAcceptedValues() != null) {
                     if (value != null) {
                         if (!cellValidation.getAcceptedValues().contains(value)) {
                             valid = false;
+                            errorMessageMap.put(i, new ErrorMessage(ErrorType.INCORRECT_VALUE_RANGE,
+                                    ErrorType.ACCEPTED_VALUES, StringUtils.join(cellValidation.getAcceptedValues(), "; ")));
                         }
                     }
                 }
@@ -52,6 +65,8 @@ public class RowValidator {
                     if (value != null) {
                         if (!value.matches(cellValidation.getPattern())) {
                             valid = false;
+                            errorMessageMap.put(i, new ErrorMessage(ErrorType.INCORRECT_VALUE_RANGE,
+                                    ErrorType.PATTERN, cellValidation.getPattern()));
                         }
                     }
                 }
@@ -69,17 +84,22 @@ public class RowValidator {
                             value = cell.getNumericCellValue();
                         } catch (Exception e) {
                             valid = false;
+                            errorMessageMap.put(i, new ErrorMessage(ErrorType.MISSING_VALUE, null, null));
                         }
                     }
                     if (value != null) {
                         if (cellValidation.getLowerBound() != null) {
                             if (value < cellValidation.getLowerBound()) {
                                 valid = false;
+                                errorMessageMap.put(i, new ErrorMessage(ErrorType.MISSING_VALUE,
+                                        ErrorType.RANGE, cellValidation.getLowerBound() + "-" + cellValidation.getUpperBound()));
                             }
                         }
                         if (cellValidation.getUpperBound() != null) {
                             if (value > cellValidation.getUpperBound()) {
                                 valid = false;
+                                errorMessageMap.put(i, new ErrorMessage(ErrorType.MISSING_VALUE,
+                                        ErrorType.RANGE, cellValidation.getLowerBound() + "-" + cellValidation.getUpperBound()));
                             }
                         }
                     }
@@ -91,14 +111,18 @@ public class RowValidator {
                                 value = cell.getStringCellValue();
                             } catch (Exception e) {
                                 valid = false;
+                                errorMessageMap.put(i, new ErrorMessage(ErrorType.MISSING_VALUE, null, null));
                             }
                             if ("".equals(value)) {
                                 valid = false;
+                                errorMessageMap.put(i, new ErrorMessage(ErrorType.MISSING_VALUE, null, null));
                             }
                         }
                         if (value != null) {
                             if (!value.equalsIgnoreCase(BOOL_VALUE_YES) && !value.equalsIgnoreCase(BOOL_VALUE_NO)) {
                                 valid = false;
+                                errorMessageMap.put(i, new ErrorMessage(ErrorType.INCORRECT_VALUE_RANGE,
+                                        ErrorType.ACCEPTED_VALUES, StringUtils.join(Arrays.asList(new String[]{"Yes", "No"}), "; ")));
                             }
                         }
                     }
@@ -113,5 +137,9 @@ public class RowValidator {
 
     public boolean isValid() {
         return valid;
+    }
+
+    public Map<Integer, ErrorMessage> getErrorMessageMap() {
+        return errorMessageMap;
     }
 }

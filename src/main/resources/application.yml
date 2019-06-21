@@ -1,3 +1,6 @@
+validator:
+  error-messages: error_messages.txt
+
 validation:
   studies:
     sheet: studies

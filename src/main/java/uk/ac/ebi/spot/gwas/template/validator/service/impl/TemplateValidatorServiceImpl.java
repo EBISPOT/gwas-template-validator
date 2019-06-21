@@ -13,9 +13,7 @@ import uk.ac.ebi.spot.gwas.template.validator.domain.ValidationConfiguration;
 import uk.ac.ebi.spot.gwas.template.validator.service.TemplateValidatorService;
 import uk.ac.ebi.spot.gwas.template.validator.util.SubmissionTemplateReader;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TemplateValidatorServiceImpl implements TemplateValidatorService {
@@ -30,23 +28,30 @@ public class TemplateValidatorServiceImpl implements TemplateValidatorService {
     private SystemConfigProperties systemConfigProperties;
 
     @Override
-    public void validate(SubmissionTemplateReader submissionTemplateReader) {
+    public Map<String, List<String>> validate(SubmissionTemplateReader submissionTemplateReader) {
+        Map<String, List<String>> errors = new LinkedHashMap<>();
         if (submissionTemplateReader.isValid()) {
-            Map<String, String> studyTagMap = readStudiesSheet(submissionTemplateReader);
+            Map<String, String> studyTagMap = readStudiesSheet(submissionTemplateReader, errors);
             Iterator<Sheet> sheets = submissionTemplateReader.sheets();
             while (sheets.hasNext()) {
                 Sheet sheet = sheets.next();
                 for (ValidationConfig validationConfig : systemConfigProperties.getValidationConfigList()) {
                     if (!validationConfig.isStudies() && sheet.getSheetName().equalsIgnoreCase(validationConfig.getSheetName())) {
-                        processSheet(sheet, validationConfig, studyTagMap);
+                        List<String> errorMap = processSheet(sheet, validationConfig, studyTagMap);
+                        if (!errorMap.isEmpty()) {
+                            errors.put(sheet.getSheetName(), errorMap);
+                        }
                         continue;
                     }
                 }
             }
         }
+
+        return errors;
     }
 
-    private Map<String, String> readStudiesSheet(SubmissionTemplateReader submissionTemplateReader) {
+    private Map<String, String> readStudiesSheet(SubmissionTemplateReader submissionTemplateReader,
+                                                 Map<String, List<String>> errors) {
         Iterator<Sheet> sheets = submissionTemplateReader.sheets();
 
         Map<String, String> studyTagMap = new HashMap<>();
@@ -65,17 +70,20 @@ public class TemplateValidatorServiceImpl implements TemplateValidatorService {
         while (sheets.hasNext()) {
             Sheet sheet = sheets.next();
             if (sheet.getSheetName().equalsIgnoreCase(studiesConfig.getSheetName())) {
-                processSheet(sheet, studiesConfig, studyTagMap);
+                List<String> errorMap = processSheet(sheet, studiesConfig, studyTagMap);
+                if (!errorMap.isEmpty()) {
+                    errors.put(sheet.getSheetName(), errorMap);
+                }
                 break;
             }
         }
         return studyTagMap;
     }
 
-    private void processSheet(Sheet sheet, ValidationConfig validationConfig, Map<String, String> studyTagMap) {
+    private List<String> processSheet(Sheet sheet, ValidationConfig validationConfig, Map<String, String> studyTagMap) {
         TemplateValidator templateValidator = templateValidatorAdapterFactory.getAdapter(validationConfig.getSheetValidationComponent());
         CellValidationParser cellValidationParser = cellValidationParserAdapterFactory.getAdapter(validationConfig.getValidationConfigFormat());
         ValidationConfiguration validationConfiguration = cellValidationParser.parseCellValidations(validationConfig.getValidationConfigLocation());
-        templateValidator.validateSheet(sheet, validationConfiguration, studyTagMap);
+        return templateValidator.validateSheet(sheet, validationConfiguration, studyTagMap);
     }
 }

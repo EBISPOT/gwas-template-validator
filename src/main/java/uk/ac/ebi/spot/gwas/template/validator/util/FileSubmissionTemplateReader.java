@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -16,7 +17,7 @@ public class FileSubmissionTemplateReader implements SubmissionTemplateReader {
 
     private boolean valid;
 
-    public FileSubmissionTemplateReader(String input) {
+    public FileSubmissionTemplateReader(File input) {
         valid = true;
         try {
             readFile(input);
@@ -26,7 +27,7 @@ public class FileSubmissionTemplateReader implements SubmissionTemplateReader {
         }
     }
 
-    private void readFile(String input) throws IOException {
+    private void readFile(File input) throws IOException {
         excelFile = new FileInputStream(input);
         importedWorkbook = new XSSFWorkbook(excelFile);
     }

@@ -3,22 +3,25 @@ package uk.ac.ebi.spot.gwas.template.validator.component.validator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import uk.ac.ebi.spot.gwas.template.validator.config.ErrorType;
 import uk.ac.ebi.spot.gwas.template.validator.domain.CellValidation;
+import uk.ac.ebi.spot.gwas.template.validator.domain.ErrorMessage;
 import uk.ac.ebi.spot.gwas.template.validator.domain.SubmissionDocument;
 import uk.ac.ebi.spot.gwas.template.validator.domain.ValidationConfiguration;
 
 import java.lang.reflect.Field;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbstractTemplateValidator implements TemplateValidator {
 
     @Override
-    public void validateSheet(Sheet sheet, ValidationConfiguration validationConfiguration, Map<String, String> studyTags) {
+    public List<String> validateSheet(Sheet sheet, ValidationConfiguration validationConfiguration, Map<String, String> studyTags) {
         Iterator<Row> rowIterator = sheet.rowIterator();
         boolean ready = false;
         boolean valid = true;
+        int count = 1;
+        Map<Integer, Map<Integer, ErrorMessage>> errorMap = new LinkedHashMap<>();
+        Map<Integer, String> generalErrorMap = new LinkedHashMap<>();
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
             if (isTriggerRow(row, validationConfiguration.getTriggerRow())) {
@@ -29,18 +32,22 @@ public abstract class AbstractTemplateValidator implements TemplateValidator {
                 RowValidator rowValidator = new RowValidator(row, validationConfiguration.getColumns(), validationConfiguration.getStudyTagColumnName());
                 valid = valid && rowValidator.isValid();
                 if (!valid) {
-                    System.err.println("Sheet [" + sheet.getSheetName() + "] is not valid. Structural validation failed.");
-                    break;
-                } else {
-                    if (!handleValidRow(rowValidator.getStudyTag(), studyTags, sheet.getSheetName())) {
-                        break;
-                    }
+                    Map<Integer, ErrorMessage> errors = rowValidator.getErrorMessageMap();
+                    errorMap.put(count, errors);
                 }
+
+                if (!handleValidRow(rowValidator.getStudyTag(), studyTags, sheet.getSheetName())) {
+                    generalErrorMap.put(count, ErrorType.ORPHAN_STUDY);
+                }
+
+                count++;
             }
         }
 
         if (valid) {
-            System.out.println("Sheet [" + sheet.getSheetName() + "] is valid.");
+            return new ArrayList<>();
+        } else {
+            return processErrorMessages(generalErrorMap, errorMap);
         }
     }
 

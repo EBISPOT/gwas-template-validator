@@ -8,11 +8,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import uk.ac.ebi.spot.gwas.template.validator.component.parser.CellValidationParserAdapterFactory;
 import uk.ac.ebi.spot.gwas.template.validator.component.validator.TemplateValidatorAdapterFactory;
-import uk.ac.ebi.spot.gwas.template.validator.domain.SubmissionDocument;
-import uk.ac.ebi.spot.gwas.template.validator.service.TemplateConverterService;
 import uk.ac.ebi.spot.gwas.template.validator.service.TemplateValidatorService;
 import uk.ac.ebi.spot.gwas.template.validator.util.FileSubmissionTemplateReader;
 import uk.ac.ebi.spot.gwas.template.validator.util.SubmissionTemplateReader;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
@@ -44,21 +46,30 @@ public class Application implements CommandLineRunner {
     @Autowired
     private TemplateValidatorService templateValidatorService;
 
-    @Autowired
-    private TemplateConverterService templateConverterService;
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
     @Override
     public void run(String... args) {
-        String inputFile = "/home/tudor/dev/gwas-template-validator/src/test/resources/example.xlsx";
+        if (args.length != 1) {
+            System.err.println("Please specify an input file.");
+        }
+        SubmissionTemplateReader submissionTemplateReader = new FileSubmissionTemplateReader(new File(args[0]));
+        Map<String, List<String>> errors = templateValidatorService.validate(submissionTemplateReader);
 
-        SubmissionTemplateReader submissionTemplateReader = new FileSubmissionTemplateReader(inputFile);
-        templateValidatorService.validate(submissionTemplateReader);
-        SubmissionDocument submissionDocument = templateConverterService.convert(submissionTemplateReader);
+        if (errors.isEmpty()) {
+            System.out.println("No errors found while validating submission!");
+        } else {
+            System.err.println("Errors found while validating submission!");
+            for (String sheet : errors.keySet()) {
+                System.err.println("Sheet: " + sheet);
+                for (String error : errors.get(sheet)) {
+                    System.err.println(" - " + error);
+                }
+            }
+        }
+
         submissionTemplateReader.close();
-
     }
 }
