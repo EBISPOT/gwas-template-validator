@@ -12,6 +12,8 @@ public class CellValidation implements Serializable {
 
     private String columnName;
 
+    private String columnHeading;
+
     private String baseType;
 
     private boolean required;
@@ -28,29 +30,35 @@ public class CellValidation implements Serializable {
 
     }
 
-    public CellValidation(String columnName, String baseType, boolean required) {
+    public CellValidation(String columnName, String columnHeading, String baseType, boolean required) {
         this.columnName = columnName;
+        this.columnHeading = columnHeading;
         this.baseType = baseType;
         this.required = required;
     }
 
-    public CellValidation(String columnName, String baseType, boolean required, Double lowerBound, Double upperBound) {
+    public CellValidation(String columnName, String baseType, String columnHeading, boolean required,
+                          Double lowerBound, Double upperBound) {
         this.columnName = columnName;
+        this.columnHeading = columnHeading;
         this.baseType = baseType;
         this.required = required;
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
     }
 
-    public CellValidation(String columnName, String baseType, boolean required, String pattern) {
+    public CellValidation(String columnName, String baseType, String columnHeading, boolean required, String pattern) {
         this.columnName = columnName;
+        this.columnHeading = columnHeading;
         this.baseType = baseType;
         this.required = required;
         this.pattern = pattern;
     }
 
-    public CellValidation(String columnName, String baseType, boolean required, List<String> acceptedValues) {
+    public CellValidation(String columnName, String baseType, String columnHeading, boolean required,
+                          List<String> acceptedValues) {
         this.columnName = columnName;
+        this.columnHeading = columnHeading;
         this.baseType = baseType;
         this.required = required;
         this.acceptedValues = acceptedValues;
@@ -110,6 +118,14 @@ public class CellValidation implements Serializable {
 
     public void setAcceptedValues(List<String> acceptedValues) {
         this.acceptedValues = acceptedValues;
+    }
+
+    public String getColumnHeading() {
+        return columnHeading;
+    }
+
+    public void setColumnHeading(String columnHeading) {
+        this.columnHeading = columnHeading;
     }
 
     @Override

@@ -10,6 +10,7 @@ import uk.ac.ebi.spot.gwas.template.validator.component.validator.TemplateValida
 import uk.ac.ebi.spot.gwas.template.validator.config.SystemConfigProperties;
 import uk.ac.ebi.spot.gwas.template.validator.config.ValidationConfig;
 import uk.ac.ebi.spot.gwas.template.validator.domain.ValidationConfiguration;
+import uk.ac.ebi.spot.gwas.template.validator.domain.ValidationOutcome;
 import uk.ac.ebi.spot.gwas.template.validator.service.TemplateValidatorService;
 import uk.ac.ebi.spot.gwas.template.validator.util.SubmissionTemplateReader;
 
@@ -28,7 +29,7 @@ public class TemplateValidatorServiceImpl implements TemplateValidatorService {
     private SystemConfigProperties systemConfigProperties;
 
     @Override
-    public Map<String, List<String>> validate(SubmissionTemplateReader submissionTemplateReader) {
+    public ValidationOutcome validate(SubmissionTemplateReader submissionTemplateReader) {
         Map<String, List<String>> errors = new LinkedHashMap<>();
         if (submissionTemplateReader.isValid()) {
             Map<String, String> studyTagMap = readStudiesSheet(submissionTemplateReader, errors);
@@ -47,7 +48,7 @@ public class TemplateValidatorServiceImpl implements TemplateValidatorService {
             }
         }
 
-        return errors;
+        return new ValidationOutcome(errors.isEmpty(), errors);
     }
 
     private Map<String, String> readStudiesSheet(SubmissionTemplateReader submissionTemplateReader,

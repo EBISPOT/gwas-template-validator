@@ -30,19 +30,19 @@ public class ErrorMessageTemplateProcessor {
         templateEngine.setTemplateResolver(templateResolver);
     }
 
-    public List<String> process(Map<Integer, String> generalErrorMap, Map<Integer, Map<Integer, ErrorMessage>> errorMap) {
+    public List<String> process(Map<Integer, String> generalErrorMap, Map<Integer, Map<String, ErrorMessage>> errorMap) {
         List<String> result = new ArrayList<>();
         List<Integer> rows = orderRows(generalErrorMap, errorMap);
         Map<String, String> contextMap;
         for (int row : rows) {
             List<String> messages = new ArrayList<>();
             if (errorMap.containsKey(row)) {
-                for (int cell : errorMap.get(row).keySet()) {
+                for (String cell : errorMap.get(row).keySet()) {
                     ErrorMessage errorMessage = errorMap.get(row).get(cell);
 
                     contextMap = new HashMap<>();
                     contextMap.put(ErrorType.CTX_ROW, Integer.toString(row));
-                    contextMap.put(ErrorType.CTX_COLUMN, Integer.toString(cell));
+                    contextMap.put(ErrorType.CTX_COLUMN, cell);
                     if (errorMessage.getValue() != null) {
                         contextMap.put(ErrorType.CTX_VALUE, errorMessage.getValue());
                     }
@@ -71,7 +71,7 @@ public class ErrorMessageTemplateProcessor {
         return templateEngine.process(errorMessagesConfig.getErrorMessages().get(messageKey), context);
     }
 
-    private List<Integer> orderRows(Map<Integer, String> generalErrorMap, Map<Integer, Map<Integer, ErrorMessage>> errorMap) {
+    private List<Integer> orderRows(Map<Integer, String> generalErrorMap, Map<Integer, Map<String, ErrorMessage>> errorMap) {
         List<Integer> result = new ArrayList<>();
         Map<Integer, Boolean> sortMap = new TreeMap<>();
         for (int i : generalErrorMap.keySet()) {

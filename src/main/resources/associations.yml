@@ -2,51 +2,66 @@ triggerRow: Add your data below this line
 studyTagColumnName: studyTag
 columns:
   - columnName: studyTag
+    columnHeading: Study Tag
     baseType: String
     required: true
   - columnName: haplotypeId
+    columnHeading: Haplotype ID
     baseType: String
     required: false
   - columnName: variantId
+    columnHeading: Variant ID
     baseType: String
     required: true
   - columnName: pvalue
+    columnHeading: p-value
     baseType: Double
     required: true
     lowerBound: 0.0
     upperBound: 0.00001
   - columnName: pvalueText
+    columnHeading: Extra information
     baseType: String
     required: false
   - columnName: proxyVariant
+    columnHeading: Proxy variant
     baseType: String
     required: false
   - columnName: effectAllele
+    columnHeading: Effect allele
     baseType: String
     required: true
     pattern: ^[actgACTG]*$
   - columnName: otherAllele
+    columnHeading: Other allele
     baseType: String
     required: false
     pattern: ^[actgACTG]*$
   - columnName: effectAlleleFrequency
+    columnHeading: Effect allele frequency
     baseType: Double
     required: true
   - columnName: oddsRatio
+    columnHeading: Odds ratio
     baseType: Double
     required: false
   - columnName: beta
+    columnHeading: Beta
     baseType: Double
     required: false
   - columnName: betaUnit
+    columnHeading: Beta unit
     baseType: String
     required: false
   - columnName: ciLower
+    columnHeading: CI lower
     baseType: Double
     required: false
   - columnName: ciUpper
+    columnHeading: CI upper
     baseType: Double
     required: false
   - columnName: standardError
+    columnHeading: Standard error
     baseType: Double
     required: false

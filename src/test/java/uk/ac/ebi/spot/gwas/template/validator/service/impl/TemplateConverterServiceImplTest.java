@@ -24,7 +24,7 @@ public class TemplateConverterServiceImplTest extends IntegrationTest {
 
     @Before
     public void setup() {
-        String inputFile = "example.xlsx";
+        String inputFile = "valid.xlsx";
         File file = new File(getClass().getClassLoader().getResource(inputFile).getFile());
         submissionTemplateReader = new FileSubmissionTemplateReader(file);
     }

@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import uk.ac.ebi.spot.gwas.template.validator.component.parser.CellValidationParserAdapterFactory;
 import uk.ac.ebi.spot.gwas.template.validator.component.validator.TemplateValidatorAdapterFactory;
+import uk.ac.ebi.spot.gwas.template.validator.domain.ValidationOutcome;
 import uk.ac.ebi.spot.gwas.template.validator.service.TemplateValidatorService;
 import uk.ac.ebi.spot.gwas.template.validator.util.FileSubmissionTemplateReader;
 import uk.ac.ebi.spot.gwas.template.validator.util.SubmissionTemplateReader;
@@ -52,15 +53,18 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        /*
         if (args.length != 1) {
             System.err.println("Please specify an input file.");
-        }
-        SubmissionTemplateReader submissionTemplateReader = new FileSubmissionTemplateReader(new File(args[0]));
-        Map<String, List<String>> errors = templateValidatorService.validate(submissionTemplateReader);
+        }*/
+        SubmissionTemplateReader submissionTemplateReader = new FileSubmissionTemplateReader(
+                new File("/home/tudor/dev/gwas-template-validator/src/test/resources/incorrect_accepted_value.xlsx"));
+        ValidationOutcome validationOutcome = templateValidatorService.validate(submissionTemplateReader);
 
-        if (errors.isEmpty()) {
+        if (validationOutcome.isValid()) {
             System.out.println("No errors found while validating submission!");
         } else {
+            Map<String, List<String>> errors = validationOutcome.getErrorMessages();
             System.err.println("Errors found while validating submission!");
             for (String sheet : errors.keySet()) {
                 System.err.println("Sheet: " + sheet);

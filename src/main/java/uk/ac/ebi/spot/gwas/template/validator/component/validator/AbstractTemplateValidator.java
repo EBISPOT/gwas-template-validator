@@ -20,7 +20,7 @@ public abstract class AbstractTemplateValidator implements TemplateValidator {
         boolean ready = false;
         boolean valid = true;
         int count = 1;
-        Map<Integer, Map<Integer, ErrorMessage>> errorMap = new LinkedHashMap<>();
+        Map<Integer, Map<String, ErrorMessage>> errorMap = new LinkedHashMap<>();
         Map<Integer, String> generalErrorMap = new LinkedHashMap<>();
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
@@ -32,12 +32,15 @@ public abstract class AbstractTemplateValidator implements TemplateValidator {
                 RowValidator rowValidator = new RowValidator(row, validationConfiguration.getColumns(), validationConfiguration.getStudyTagColumnName());
                 valid = valid && rowValidator.isValid();
                 if (!valid) {
-                    Map<Integer, ErrorMessage> errors = rowValidator.getErrorMessageMap();
-                    errorMap.put(count, errors);
+                    Map<String, ErrorMessage> errors = rowValidator.getErrorMessageMap();
+                    if (!errors.isEmpty()) {
+                        errorMap.put(count, errors);
+                    }
                 }
 
                 if (!handleValidRow(rowValidator.getStudyTag(), studyTags, sheet.getSheetName())) {
                     generalErrorMap.put(count, ErrorType.ORPHAN_STUDY);
+                    valid = false;
                 }
 
                 count++;

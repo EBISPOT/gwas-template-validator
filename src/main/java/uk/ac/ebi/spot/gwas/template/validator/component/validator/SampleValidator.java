@@ -36,7 +36,7 @@ public class SampleValidator extends AbstractTemplateValidator implements Templa
     }
 
     @Override
-    public List<String> processErrorMessages(Map<Integer, String> generalErrorMap, Map<Integer, Map<Integer, ErrorMessage>> errorMap) {
+    public List<String> processErrorMessages(Map<Integer, String> generalErrorMap, Map<Integer, Map<String, ErrorMessage>> errorMap) {
         return errorMessageTemplateProcessor.process(generalErrorMap, errorMap);
     }
 

@@ -36,7 +36,7 @@ public class AssociationValidator extends AbstractTemplateValidator implements T
     }
 
     @Override
-    public List<String> processErrorMessages(Map<Integer, String> generalErrorMap, Map<Integer, Map<Integer, ErrorMessage>> errorMap) {
+    public List<String> processErrorMessages(Map<Integer, String> generalErrorMap, Map<Integer, Map<String, ErrorMessage>> errorMap) {
         return errorMessageTemplateProcessor.process(generalErrorMap, errorMap);
     }
 

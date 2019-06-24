@@ -2,49 +2,63 @@ triggerRow: Add your data below this line
 studyTagColumnName: studyTag
 columns:
   - columnName: studyTag
+    columnHeading: Study tag
     baseType: String
     required: true
   - columnName: genotypingTechnology
+    columnHeading: Genotyping technology
     baseType: String
     required: true
     acceptedValues:
-      - Genome-wide genotyping array
-      - Targeted genotyping array
-      - Exome genotyping array
-      - Whole genome sequencing
+      - genome-wide genotyping array
+      - targeted genotyping array
+      - exome genotyping array
+      - whole genome sequencing
   - columnName: arrayManufacturer
+    columnHeading: Array Manufacturer
     baseType: String
     required: false
   - columnName: arrayInformation
+    columnHeading: Array information
     baseType: String
     required: false
   - columnName: imputation
+    columnHeading: Imputation
     baseType: Boolean
     required: true
   - columnName: variantCount
+    columnHeading: Variant count
     baseType: Integer
     required: true
   - columnName: statisticalModel
+    columnHeading: Statistical model
     baseType: String
     required: false
   - columnName: studyDescription
+    columnHeading: Study description
     baseType: String
     required: false
   - columnName: trait
+    columnHeading: Trait
     baseType: String
     required: true
   - columnName: efoTrait
+    columnHeading: Mapped trait
     baseType: String
     required: false
   - columnName: backgroundTrait
+    columnHeading: Background trait
     baseType: String
     required: false
   - columnName: backgroundEfoTrait
+    columnHeading: Mapped background trait
     baseType: String
     required: false
   - columnName: summaryStatisticsFile
+    columnHeading: Summary statistics file
     baseType: String
     required: false
   - columnName: summaryStatisticsAssembly
+    columnHeading: Summary statistics assembly
     baseType: String
     required: false

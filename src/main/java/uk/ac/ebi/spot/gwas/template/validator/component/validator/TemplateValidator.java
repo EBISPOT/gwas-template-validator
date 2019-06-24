@@ -20,5 +20,5 @@ public interface TemplateValidator {
 
     void convertRow(Row row, List<CellValidation> columns, SubmissionDocument submissionDocument);
 
-    List<String> processErrorMessages(Map<Integer, String> generalErrorMap, Map<Integer, Map<Integer, ErrorMessage>> errorMap);
+    List<String> processErrorMessages(Map<Integer, String> generalErrorMap, Map<Integer, Map<String, ErrorMessage>> errorMap);
 }
